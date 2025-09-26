@@ -252,10 +252,10 @@
                         <div class="row mb-3">
                             <div class="funfact col mb-4">
                                 <span class="number"><span class="counter">280</span></span>
-                                <p class="title">FINISHED <br>PHOTOSESSIONS</p>
+                                <p class="title">FINISHED <br>SESSIONS</p>
                             </div>
                             <div class="funfact col mb-4">
-                                <span class="number"><span class="counter">245</span></span>
+                                <span class="number"><span class="counter">10</span></span>
                                 <p class="title">ONGOING <br>PROJECTS NEW</p>
                             </div>
                             <div class="funfact col mb-4">
@@ -350,37 +350,53 @@
         <!-- About Toolbar Popup Wrapper End -->
 
         <!-- Gallery Section Start -->
-        <div class="gallery-section section position-relative">
+        <!-- Gallery / Reels -->
+<section class="gallery-section section position-relative">
 
-            <div class="gallery-title-video-popup">
-                <div class="section-title mb-lg-10 mb-6">
-                    <h2 class="title">Shots by JAY</h2>
-                </div>
-                <div class="gallery-video-popup d-none d-md-block">
-                    <a href="https://www.youtube.com/watch?v=7e90gBu4pas" class="mfp-video"><i class="fa fa-play"></i></a>
-                    <span class="text">PLAY NOW</span>
-                </div>
-            </div>
+  <!-- Hero Background + Play -->
+  <div class="gallery-hero">
+    <!-- Use any image you like here as the static background -->
+    <div class="gallery-hero-bg" style="background-image:url('images/gallery-1.jpg');"></div>
 
-            <div class="gallery-slider-wrapper">
-                <div class="gallery-slider">
-                    <img src="images/gallery-1.jpg" alt="Gallery Image">
-                    <img src="images/gallery-1.jpg" alt="Gallery Image">
-                    <img src="images/gallery-1.jpg" alt="Gallery Image">
-                    <img src="images/gallery-1.jpg" alt="Gallery Image">
-                    <img src="images/gallery-1.jpg" alt="Gallery Image">
-                </div>
-                <div class="container">
-                    <div class="gallery-thumb-slider">
-                        <div class="gallery-thumb"><img src="images/gallery-thumb-1.jpg" alt="Gallery Image Thumbnail"></div>
-                        <div class="gallery-thumb"><img src="images/gallery-thumb-2.jpg" alt="Gallery Image Thumbnail"></div>
-                        <div class="gallery-thumb"><img src="images/gallery-thumb-3.jpg" alt="Gallery Image Thumbnail"></div>
-                        <div class="gallery-thumb"><img src="images/gallery-thumb-4.jpg" alt="Gallery Image Thumbnail"></div>
-                        <div class="gallery-thumb"><img src="images/gallery-thumb-4.jpg" alt="Gallery Image Thumbnail"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="gallery-title-video-popup">
+      <div class="section-title mb-lg-10 mb-6">
+        <h2 class="title">Shots by JAY</h2>
+      </div>
+
+      <!-- Play button triggers modal with the main video -->
+      <button class="gallery-play-btn" id="openMainVideo" aria-label="Play showreel">
+        <i class="fa fa-play"></i>
+        <span class="text">PLAY NOW</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Auto-playing reels (muted) -->
+  <div class="container">
+    <div class="reels-row">
+      <video class="reel" preload="metadata" autoplay muted loop playsinline
+        src="https://res.cloudinary.com/dtfx1jpkq/video/upload/v1758888651/Seb_Final_syvetp.mp4"></video>
+
+      <video class="reel" preload="metadata" autoplay muted loop playsinline
+        src="https://res.cloudinary.com/dtfx1jpkq/video/upload/v1758878857/House_Tour_qsvp8z.mp4"></video>
+
+      <video class="reel" preload="metadata" autoplay muted loop playsinline
+        src="https://res.cloudinary.com/dtfx1jpkq/video/upload/v1758871800/Code_And_Capitol_Reel_anzfoy.mp4"></video>
+    </div>
+  </div>
+
+  <!-- Minimal modal for the main video -->
+  <div class="video-modal" id="videoModal" aria-hidden="true">
+    <div class="video-modal__backdrop" id="closeVideo"></div>
+    <div class="video-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="videoTitle">
+      <button class="video-modal__close" id="closeVideoBtn" aria-label="Close video">&times;</button>
+      <h3 id="videoTitle" class="sr-only">Main Video</h3>
+      <video id="mainVideo" controls playsinline preload="metadata"
+        src="https://res.cloudinary.com/dtfx1jpkq/video/upload/v1758890183/main_vid_pahj18.mp4"></video>
+    </div>
+  </div>
+</section>
+
         <!-- Gallery Section End -->
 
 <!--pricing section-->
@@ -718,6 +734,53 @@
 
     <!-- Activation JS -->
     <script src="js/active.js"></script>
+
+
+    <script>
+  (function () {
+    const openBtn = document.getElementById('openMainVideo');
+    const modal = document.getElementById('videoModal');
+    const closeBackdrop = document.getElementById('closeVideo');
+    const closeBtn = document.getElementById('closeVideoBtn');
+    const mainVideo = document.getElementById('mainVideo');
+
+    function openModal() {
+      modal.classList.add('is-open');
+      mainVideo.currentTime = 0;
+      // Start playing when metadata is ready (Safari friendly)
+      const tryPlay = () => mainVideo.play().catch(() => {});
+      if (mainVideo.readyState >= 2) tryPlay();
+      else mainVideo.addEventListener('loadeddata', tryPlay, { once: true });
+    }
+
+    function closeModal() {
+      modal.classList.remove('is-open');
+      mainVideo.pause();
+    }
+
+    openBtn.addEventListener('click', openModal);
+    closeBackdrop.addEventListener('click', closeModal);
+    closeBtn.addEventListener('click', closeModal);
+
+    // Esc to close
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal.classList.contains('is-open')) closeModal();
+    });
+
+    // Mobile data saver: only autoplay reels when in viewport
+    const reels = document.querySelectorAll('.reel');
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((ent) => {
+        const v = ent.target;
+        if (ent.isIntersecting) v.play().catch(()=>{});
+        else v.pause();
+      });
+    }, { threshold: 0.4 });
+
+    reels.forEach(v => io.observe(v));
+  })();
+</script>
+
 
 
 
