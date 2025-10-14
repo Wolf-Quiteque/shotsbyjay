@@ -120,6 +120,22 @@
             prevEl: '.slider4-prev'
         }
     });
+    /* About Testimonial Slider (Swiper) */
+    var aboutTestimonialSlider = new Swiper('.about-testimonial-active', {
+        loop: true,
+        autoplay: {
+            delay: 3000,
+            disableOnInteraction: false
+        },
+        pagination: {
+            el: '.about-testimonial-pagination',
+            clickable: true
+        },
+        navigation: {
+            nextEl: '.about-testimonial-next',
+            prevEl: '.about-testimonial-prev',
+        }
+    });
     /* Testimonial Slider (Swiper) */
     var testimonialSlider = new Swiper('.testimonial-slider', {
         loop: true,
