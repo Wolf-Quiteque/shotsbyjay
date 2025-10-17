@@ -21713,7 +21713,6 @@ textarea.form-control {
   width: 50%;
   padding: 96px;
   text-align: center;
-  background-color: #000;
 }
 
 @media only screen and (min-width: 1200px) and (max-width: 1449px), only screen and (min-width: 992px) and (max-width: 1199px) {
